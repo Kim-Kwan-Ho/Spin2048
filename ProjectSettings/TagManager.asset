@@ -41,3 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: BG
+    uniqueID: 2951284275
+    locked: 0
+  - name: Cell
+    uniqueID: 3490631107
+    locked: 0
+  - name: Tile
+    uniqueID: 2332707635
+    locked: 0
+  - name: Value
+    uniqueID: 1815616287
+    locked: 0
