@@ -4,6 +4,12 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BoardSettings", menuName = "Scriptable Objects/Board/BoardSetting")]
 public class BoardSettingSo : ScriptableObject
 {
+    [SerializeField] private float _delayTime;
+    public float DelayTime { get { return _delayTime; } }
+    [SerializeField] private float _rotateTime;
+    public float RotateTime { get { return _rotateTime; } }
+
+
     [SerializeField] private int _row;
     public int Row { get { return _row; } }
     [SerializeField] private int _col;
