@@ -100,6 +100,10 @@ namespace KKH.Board
             {
                 TurnBoard(false);
             }
+            else if (Input.GetKeyDown(KeyCode.Space))
+            {
+                PullDownTiles();
+            }
         }
 
         private void TurnBoard(bool left)
@@ -118,11 +122,19 @@ namespace KKH.Board
                 var newPos = newPositions[tile];
                 tile.Move(_cells[newPos.x, newPos.y]);
             }
+            StartCoroutine(CoPullDownBoardDelay());
         }
 
+        private IEnumerator CoPullDownBoardDelay()
+        {
+            _canMove = false;
+            yield return new WaitForSeconds(_boardSetting.RotateTime);
+            _canMove = true;
+            PullDownTiles();
+        }
         private void PullDownTiles()
         {
-
+            Move(Vector2Int.left, 1, 1, 0, 1);
         }
 
 
@@ -176,7 +188,7 @@ namespace KKH.Board
         private bool MoveTile(Tile tile, Vector2Int direction)
         {
             Cell newCell = null;
-            Cell adjacent = GetCell(tile.Cell.Coordinates.x + direction.x, tile.Cell.Coordinates.y -direction.y);
+            Cell adjacent = GetCell(tile.Cell.Coordinates.x + direction.x, tile.Cell.Coordinates.y - direction.y);
 
             while (adjacent != null)
             {
@@ -191,7 +203,7 @@ namespace KKH.Board
                 }
 
                 newCell = adjacent;
-                adjacent = GetCell(adjacent.Coordinates.x + direction.x, adjacent.Coordinates.y -direction.y);
+                adjacent = GetCell(adjacent.Coordinates.x + direction.x, adjacent.Coordinates.y - direction.y);
             }
 
             if (newCell != null)
@@ -218,7 +230,7 @@ namespace KKH.Board
         private IEnumerator WaitForChanges()
         {
             _canMove = false;
-            yield return new WaitForSeconds(0.1f);
+            yield return new WaitForSeconds(_boardSetting.DelayTime);
             _canMove = true;
 
             foreach (var tile in _tileList)
