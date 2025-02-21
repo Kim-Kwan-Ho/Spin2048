@@ -17,4 +17,4 @@ MonoBehaviour:
   _offSetX: 0.5
   _offSetY: 0.5
   _cellOffSet: 0.2
-  _spawnTileMaxLevel: 0
+  _spawnTileMaxLevel: 2

@@ -11,7 +11,7 @@ namespace KKH.Board
     {
         [Header("Board Setting")]
         [SerializeField] private BoardSettingSo _boardSetting;
-
+        private BoardRotation _boardRotation;
 
 
         [Header("Cells")]
@@ -31,6 +31,7 @@ namespace KKH.Board
             base.Initialize();
 
 
+            _boardRotation = new BoardRotation(_boardSetting.Col, _boardSetting.Row);
             _cells = new Cell[_boardSetting.Col, _boardSetting.Row];
             _tileList = new List<Tile>(_boardSetting.GetTotalTileCount());
 
@@ -91,11 +92,32 @@ namespace KKH.Board
             {
                 Move(Vector2Int.down, 0, 1, _boardSetting.Col - 2, -1);
             }
+            else if (Input.GetKeyDown(KeyCode.A))
+            {
+                TurnBoard(true);
+            }
+            else if (Input.GetKeyDown(KeyCode.D))
+            {
+                TurnBoard(false);
+            }
         }
 
-        private void TurnBoard(bool right)
+        private void TurnBoard(bool left)
         {
+            Dictionary<Tile, Vector2Int> newPositions = new Dictionary<Tile, Vector2Int>();
 
+            foreach (var tile in _tileList)
+            {
+                var pos = left ? _boardRotation.RightRotationDic[tile.Cell.Coordinates] : _boardRotation.LeftRotationDic[tile.Cell.Coordinates];
+                newPositions[tile] = pos;
+                tile.ChangeCell(null);
+            }
+
+            foreach (var tile in _tileList)
+            {
+                var newPos = newPositions[tile];
+                tile.Move(_cells[newPos.x, newPos.y]);
+            }
         }
 
         private void PullDownTiles()
