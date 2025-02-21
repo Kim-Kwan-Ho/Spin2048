@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60baae6e50c6251498863aab08b6ef95, type: 3}
   m_Name: BoardSettings
   m_EditorClassIdentifier: 
+  _delayTime: 0.25
+  _rotateTime: 0.3
   _row: 4
   _col: 4
   _offSetX: 0.5
