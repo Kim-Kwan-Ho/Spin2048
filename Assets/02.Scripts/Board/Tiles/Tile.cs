@@ -34,12 +34,21 @@ namespace KKH.Board
 
         public void SpawnTile(Cell cell, int step)
         {
-            _cell = cell;
-            _cell.SetTile(this);
+            ChangeCell(cell);
             SetTileInfo(step);
             transform.position = cell.transform.position;
         }
+        public void ChangeCell(Cell cell)
+        {
+            _cell?.RemoveTile();
+            _cell = cell;
+            if (cell == null)
+            {
+                return;
+            }
+            _cell.SetTile(this);
 
+        }
         public void UpgradeTileStep()
         {
             SetTileInfo(++_step);
@@ -67,9 +76,7 @@ namespace KKH.Board
         }
         public void Move(Cell cell)
         {
-            _cell?.RemoveTile();
-            _cell = cell;
-            _cell.SetTile(this);
+            ChangeCell(cell);
             StartCoroutine(CoMoveTo(cell.transform.position, false));
         }
         private IEnumerator CoMoveTo(Vector2 targetPos, bool merging)
