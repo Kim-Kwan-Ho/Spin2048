@@ -99,6 +99,12 @@ namespace KKH.Board
             }
         }
 
+        public void DestroyTile()
+        {
+            _cell?.RemoveTile();
+            Destroy(this.gameObject);
+        }
+
 #if UNITY_EDITOR
         protected override void OnBindField()
         {

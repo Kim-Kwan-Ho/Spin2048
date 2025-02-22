@@ -56,6 +56,17 @@ namespace KKH.Board
             _canMove = true;
             SpawnTile();
         }
+
+        private void ResetBoard()
+        {
+            foreach (var tile in _tileList)
+            {
+                tile.DestroyTile();
+            }
+            _tileList.Clear();
+            SpawnTile();
+            _canMove = true;
+        }
         private void SpawnTile()
         {
             Cell cell = GetRandomEmptyCell();
@@ -70,7 +81,7 @@ namespace KKH.Board
                 tile.SpawnTile(cell, _boardSetting.GetSpawnTileLevel());
                 _tileList.Add(tile);
 
-                if (_tileList.Count >=_boardSetting.GetTotalTileCount() && CheckGameOver())
+                if (_tileList.Count >= _boardSetting.GetTotalTileCount() && CheckGameOver())
                 {
                     _canMove = false;
                 }
@@ -108,6 +119,10 @@ namespace KKH.Board
             else if (Input.GetKeyDown(KeyCode.Space))
             {
                 PullDownTiles();
+            }
+            else if (Input.GetKeyDown(KeyCode.R))
+            {
+                ResetBoard();
             }
         }
 
@@ -237,11 +252,7 @@ namespace KKH.Board
             {
                 tile.UnLockTile();
             }
-
-            if (_tileList.Count < _boardSetting.GetTotalTileCount())
-            {
-                SpawnTile();
-            }
+            SpawnTile();
         }
         private Cell GetNextCell(Cell cell, Vector2Int direction)
         {
