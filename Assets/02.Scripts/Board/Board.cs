@@ -69,6 +69,11 @@ namespace KKH.Board
                 Tile tile = Instantiate(_tilePrefab, transform).GetComponent<Tile>();
                 tile.SpawnTile(cell, _boardSetting.GetSpawnTileLevel());
                 _tileList.Add(tile);
+
+                if (_tileList.Count >=_boardSetting.GetTotalTileCount() && CheckGameOver())
+                {
+                    _canMove = false;
+                }
             }
         }
 
@@ -181,14 +186,15 @@ namespace KKH.Board
 
             if (moved)
             {
-                StartCoroutine(WaitForChanges());
+                StartCoroutine(CoWaitForChanges());
             }
         }
+
 
         private bool MoveTile(Tile tile, Vector2Int direction)
         {
             Cell newCell = null;
-            Cell adjacent = GetCell(tile.Cell.Coordinates.x + direction.x, tile.Cell.Coordinates.y - direction.y);
+            Cell adjacent = GetNextCell(tile.Cell, direction);
 
             while (adjacent != null)
             {
@@ -203,7 +209,7 @@ namespace KKH.Board
                 }
 
                 newCell = adjacent;
-                adjacent = GetCell(adjacent.Coordinates.x + direction.x, adjacent.Coordinates.y - direction.y);
+                adjacent = GetNextCell(adjacent, direction);
             }
 
             if (newCell != null)
@@ -214,12 +220,6 @@ namespace KKH.Board
 
             return false;
         }
-
-        private Cell GetCell(int x, int y)
-        {
-            return (x >= 0 && x < _boardSetting.Row && y >= 0 && y < _boardSetting.Col) ? _cells[x, y] : null;
-        }
-
         private void MergeTiles(Tile a, Tile b)
         {
             _tileList.Remove(a);
@@ -227,7 +227,7 @@ namespace KKH.Board
             b.UpgradeTileStep();
         }
 
-        private IEnumerator WaitForChanges()
+        private IEnumerator CoWaitForChanges()
         {
             _canMove = false;
             yield return new WaitForSeconds(_boardSetting.DelayTime);
@@ -242,6 +242,35 @@ namespace KKH.Board
             {
                 SpawnTile();
             }
+        }
+        private Cell GetNextCell(Cell cell, Vector2Int direction)
+        {
+            return GetCell(cell.Coordinates.x + direction.x, cell.Coordinates.y - direction.y);
+        }
+        private Cell GetCell(int x, int y)
+        {
+            return (x >= 0 && x < _boardSetting.Row && y >= 0 && y < _boardSetting.Col) ? _cells[x, y] : null;
+        }
+
+
+
+
+        private bool CheckGameOver()
+        {
+            Vector2Int[] directions = { Vector2Int.right, Vector2Int.left, Vector2Int.up, Vector2Int.down };
+            foreach (var tile in _tileList)
+            {
+                foreach (var direction in directions)
+                {
+                    Cell adjacentCell = GetNextCell(tile.Cell, direction);
+                    if (adjacentCell != null && tile.CheckMerge(adjacentCell.Tile))
+                    {
+                        return false;
+                    }
+                }
+            }
+            Debug.Log("GG");
+            return true;
         }
 
 
