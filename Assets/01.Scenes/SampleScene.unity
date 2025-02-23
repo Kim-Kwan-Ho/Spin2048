@@ -275,6 +275,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _boardSetting: {fileID: 11400000, guid: e6c0cddfae94c7641ba7fd9d3f8b058d, type: 2}
+  _boardBackground: {fileID: 4723672842104890689, guid: e0f300c30d607204cb5f19d287a155e6, type: 3}
   _cellPrefab: {fileID: 5251409849386283055, guid: 3c7c9c3ae0443da44b985cafecb56ef1, type: 3}
   _tilePrefab: {fileID: 5551999032830924477, guid: 90dcbaa42d84c814faae8f45740e737f, type: 3}
 --- !u!4 &241750847
@@ -655,7 +656,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _camera: {fileID: 519420031}
-  _boardUnit: 2.5
+  _boardUnit: 3.2
 --- !u!1 &626406796
 GameObject:
   m_ObjectHideFlags: 0
@@ -1530,7 +1531,7 @@ MonoBehaviour:
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1440, y: 2960}
-  m_ScreenMatchMode: 0
+  m_ScreenMatchMode: 1
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96

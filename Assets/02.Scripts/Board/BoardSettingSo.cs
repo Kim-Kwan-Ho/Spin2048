@@ -15,12 +15,13 @@ public class BoardSettingSo : ScriptableObject
     [SerializeField] private int _col;
     public int Col { get { return _col; } }
     [SerializeField] private float _offSetX;
-    public float OffSetX { get { return _offSetX; } }
     [SerializeField] private float _offSetY;
-    public float OffSetY { get { return OffSetY; } }
 
     [SerializeField] private float _cellOffSet;
+    public float CellOffSet { get { return _cellOffSet; } }
 
+    [SerializeField] private float _backgroundPadding;
+    public float BackGroundPadding { get { return _backgroundPadding; } }
 
     [SerializeField] private int _spawnTileMaxLevel;
     public float CalcXStartPos()
