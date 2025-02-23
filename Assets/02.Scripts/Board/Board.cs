@@ -57,7 +57,7 @@ namespace KKH.Board
             SpawnTile();
         }
 
-        private void ResetBoard()
+        public void ResetBoard()
         {
             foreach (var tile in _tileList)
             {
@@ -67,8 +67,11 @@ namespace KKH.Board
             SpawnTile();
             _canMove = true;
         }
-        private void SpawnTile()
+        public void SpawnTile()
         {
+            if (!_canMove)
+                return;
+
             Cell cell = GetRandomEmptyCell();
 
             if (cell == null)
@@ -88,46 +91,11 @@ namespace KKH.Board
             }
         }
 
-        private void Update()
+        public void TurnBoard(bool left)
         {
-            if (!_canMove) return;
+            if (!_canMove)
+                return;
 
-            if (Input.GetKeyDown(KeyCode.UpArrow))
-            {
-                Move(Vector2Int.right, _boardSetting.Row - 2, -1, 0, 1);
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow))
-            {
-                Move(Vector2Int.left, 1, 1, 0, 1);
-            }
-            else if (Input.GetKeyDown(KeyCode.LeftArrow))
-            {
-                Move(Vector2Int.up, 0, 1, 1, 1);
-            }
-            else if (Input.GetKeyDown(KeyCode.RightArrow))
-            {
-                Move(Vector2Int.down, 0, 1, _boardSetting.Col - 2, -1);
-            }
-            else if (Input.GetKeyDown(KeyCode.A))
-            {
-                TurnBoard(true);
-            }
-            else if (Input.GetKeyDown(KeyCode.D))
-            {
-                TurnBoard(false);
-            }
-            else if (Input.GetKeyDown(KeyCode.Space))
-            {
-                PullDownTiles();
-            }
-            else if (Input.GetKeyDown(KeyCode.R))
-            {
-                ResetBoard();
-            }
-        }
-
-        private void TurnBoard(bool left)
-        {
             Dictionary<Tile, Vector2Int> newPositions = new Dictionary<Tile, Vector2Int>();
 
             foreach (var tile in _tileList)
@@ -149,7 +117,6 @@ namespace KKH.Board
         {
             _canMove = false;
             yield return new WaitForSeconds(_boardSetting.RotateTime);
-            _canMove = true;
             PullDownTiles();
         }
         private void PullDownTiles()
@@ -184,29 +151,24 @@ namespace KKH.Board
 
         private void Move(Vector2Int direction, int startX, int incrementX, int startY, int incrementY)
         {
-            bool moved = false;
 
             for (int x = startX; x >= 0 && x < _boardSetting.Row; x += incrementX)
             {
                 for (int y = startY; y >= 0 && y < _boardSetting.Col; y += incrementY)
                 {
                     Cell cell = _cells[x, y];
-
-                    if (cell.Tile != null && MoveTile(cell.Tile, direction))
+                    if (cell.Tile != null)
                     {
-                        moved = true;
+                        MoveTile(cell.Tile, direction);
                     }
                 }
             }
 
-            if (moved)
-            {
-                StartCoroutine(CoWaitForChanges());
-            }
+            StartCoroutine(CoWaitForChanges());
         }
 
 
-        private bool MoveTile(Tile tile, Vector2Int direction)
+        private void MoveTile(Tile tile, Vector2Int direction)
         {
             Cell newCell = null;
             Cell adjacent = GetNextCell(tile.Cell, direction);
@@ -218,7 +180,7 @@ namespace KKH.Board
                     if (tile.CheckMerge(adjacent.Tile))
                     {
                         MergeTiles(tile, adjacent.Tile);
-                        return true;
+                        return;
                     }
                     break;
                 }
@@ -230,10 +192,7 @@ namespace KKH.Board
             if (newCell != null)
             {
                 tile.Move(newCell);
-                return true;
             }
-
-            return false;
         }
         private void MergeTiles(Tile a, Tile b)
         {
@@ -244,15 +203,20 @@ namespace KKH.Board
 
         private IEnumerator CoWaitForChanges()
         {
-            _canMove = false;
             yield return new WaitForSeconds(_boardSetting.DelayTime);
-            _canMove = true;
-
             foreach (var tile in _tileList)
             {
                 tile.UnLockTile();
             }
-            SpawnTile();
+            if (_tileList.Count >= _boardSetting.GetTotalTileCount())
+            {
+                Debug.Log("GG");
+            }
+            else
+            {
+                _canMove = true;
+                SpawnTile();
+            }
         }
         private Cell GetNextCell(Cell cell, Vector2Int direction)
         {
