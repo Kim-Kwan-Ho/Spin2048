@@ -67,7 +67,7 @@ namespace KKH.Board
             SpawnTile();
         }
 
-        public void ResetBoard()
+        private void ResetBoard()
         {
             foreach (var tile in _tileList)
             {
@@ -98,6 +98,7 @@ namespace KKH.Board
                 if (_tileList.Count >= _boardSetting.GetTotalTileCount() && CheckGameOver())
                 {
                     _canMove = false;
+                    GameManager.Instance.OnGameOver?.Invoke();
                 }
             }
         }
@@ -162,6 +163,7 @@ namespace KKH.Board
         private void Move(Vector2Int direction, int startX, int incrementX, int startY, int incrementY)
         {
 
+            int score = 0;
             for (int x = startX; x >= 0 && x < _boardSetting.Row; x += incrementX)
             {
                 for (int y = startY; y >= 0 && y < _boardSetting.Col; y += incrementY)
@@ -169,16 +171,20 @@ namespace KKH.Board
                     Cell cell = _cells[x, y];
                     if (cell.Tile != null)
                     {
-                        MoveTile(cell.Tile, direction);
+                        score += MoveTile(cell.Tile, direction);
                     }
                 }
             }
 
+            if (score != 0)
+            {
+                ScoreManager.Instance.AddScore(score);
+            }
             StartCoroutine(CoWaitForChanges());
         }
 
 
-        private void MoveTile(Tile tile, Vector2Int direction)
+        private int MoveTile(Tile tile, Vector2Int direction)
         {
             Cell newCell = null;
             Cell adjacent = GetNextCell(tile.Cell, direction);
@@ -189,8 +195,8 @@ namespace KKH.Board
                 {
                     if (tile.CheckMerge(adjacent.Tile))
                     {
-                        MergeTiles(tile, adjacent.Tile);
-                        return;
+
+                        return MergeTiles(tile, adjacent.Tile);
                     }
                     break;
                 }
@@ -203,12 +209,14 @@ namespace KKH.Board
             {
                 tile.Move(newCell);
             }
+
+            return 0;
         }
-        private void MergeTiles(Tile a, Tile b)
+        private int MergeTiles(Tile a, Tile b)
         {
             _tileList.Remove(a);
             a.Merge(b.Cell);
-            b.UpgradeTileStep();
+            return b.UpgradeTileStep();
         }
 
         private IEnumerator CoWaitForChanges()
@@ -218,6 +226,8 @@ namespace KKH.Board
             {
                 tile.UnLockTile();
             }
+
+            yield return new WaitForSeconds(_boardSetting.DelayTime);
             if (_tileList.Count >= _boardSetting.GetTotalTileCount())
             {
                 GameManager.Instance.OnGameOver?.Invoke();
@@ -254,7 +264,6 @@ namespace KKH.Board
                     }
                 }
             }
-            Debug.Log("GG");
             return true;
         }
 
