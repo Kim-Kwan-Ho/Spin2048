@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using KKH.Manager;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -17,7 +18,6 @@ namespace KKH.Board
         [Header("Cells")]
         [SerializeField] private GameObject _cellPrefab;
         private Cell[,] _cells;
-        public Cell[,] Cells { get { return _cells; } }
 
 
         [Header("Tiles")]
@@ -39,6 +39,16 @@ namespace KKH.Board
             CreateNewBoard();
         }
 
+
+        private void OnEnable()
+        {
+            GameManager.Instance.OnGameRestart += ResetBoard;
+        }
+
+        private void OnDisable()
+        {
+            GameManager.Instance.OnGameRestart -= ResetBoard;
+        }
         private void CreateNewBoard()
         {
             _tileList.Clear();
@@ -64,8 +74,9 @@ namespace KKH.Board
                 tile.DestroyTile();
             }
             _tileList.Clear();
-            SpawnTile();
+
             _canMove = true;
+            SpawnTile();
         }
         public void SpawnTile()
         {
@@ -143,7 +154,6 @@ namespace KKH.Board
                 hash.Add(new Vector2Int(x, y));
                 if (hash.Count >= _boardSetting.GetTotalTileCount())
                 {
-                    Debug.LogError("Tile is all filled");
                     return null;
                 }
             }
@@ -210,7 +220,7 @@ namespace KKH.Board
             }
             if (_tileList.Count >= _boardSetting.GetTotalTileCount())
             {
-                Debug.Log("GG");
+                GameManager.Instance.OnGameOver?.Invoke();
             }
             else
             {
