@@ -252,7 +252,7 @@ namespace KKH.Board
                 tile.UnLockTile();
             }
 
-            yield return new WaitForSeconds(_boardSetting.DelayTime);
+            yield return new WaitForSeconds(_boardSetting.SpawnDelayTime);
             if (_tileList.Count >= _boardSetting.GetTotalTileCount())
             {
                 GameManager.Instance.OnGameOver?.Invoke();
