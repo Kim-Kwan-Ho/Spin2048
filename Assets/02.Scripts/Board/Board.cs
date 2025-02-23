@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using KKH.Manager;
-using Unity.VisualScripting;
 using UnityEngine;
 
 
@@ -13,7 +12,7 @@ namespace KKH.Board
         [Header("Board Setting")]
         [SerializeField] private BoardSettingSo _boardSetting;
         private BoardRotation _boardRotation;
-
+       [SerializeField]  private GameObject _boardBackground;
 
         [Header("Cells")]
         [SerializeField] private GameObject _cellPrefab;
@@ -51,22 +50,49 @@ namespace KKH.Board
         }
         private void CreateNewBoard()
         {
+            CreateBoardBackground();
             _tileList.Clear();
-            float x = _boardSetting.CalcXStartPos();
-            float y = _boardSetting.CalcYStartPos();
+            float boardWidth = _boardSetting.Col + (_boardSetting.Col - 1) * _boardSetting.CellOffSet;
+            float boardHeight = _boardSetting.Row + (_boardSetting.Row - 1) * _boardSetting.CellOffSet;
+
+            // 보드의 중앙 시작 위치 계산
+            float xStart = -boardWidth / 2 + 0.5f;
+            float yStart = -boardHeight / 2 + 0.5f;
+
+            float offSetY = 0;
 
             for (int r = 0; r < _boardSetting.Row; r++)
             {
+                float offSetX = 0;
+
                 for (int c = 0; c < _boardSetting.Col; c++)
                 {
-                    _cells[r, c] = Instantiate(_cellPrefab, new Vector2(x + c, y + r), Quaternion.identity).GetComponent<Cell>();
+                    _cells[r, c] = Instantiate(
+                        _cellPrefab,
+                        new Vector2(xStart + c + offSetX, yStart + r + offSetY),
+                        Quaternion.identity
+                    ).GetComponent<Cell>();
+
                     _cells[r, c].SetCell(new Vector2Int(r, c));
+                    offSetX += _boardSetting.CellOffSet;
                 }
+
+                offSetY += _boardSetting.CellOffSet;
             }
+
             _canMove = true;
             SpawnTile();
         }
+        private void CreateBoardBackground()
+        {
+            GameObject boardBackground = Instantiate(_boardBackground);
 
+            float boardWidth = _boardSetting.Col + (_boardSetting.Col - 1) * _boardSetting.CellOffSet + _boardSetting.BackGroundPadding * 2;
+            float boardHeight = _boardSetting.Row + (_boardSetting.Row - 1) * _boardSetting.CellOffSet + _boardSetting.BackGroundPadding * 2;
+
+            boardBackground.transform.position = new Vector2(0,0);
+            boardBackground.transform.localScale = new Vector3(boardWidth, boardHeight, 1);
+        }
         private void ResetBoard()
         {
             foreach (var tile in _tileList)
@@ -273,6 +299,7 @@ namespace KKH.Board
         {
             base.OnBindField();
             _boardSetting = FindObjectInAsset<BoardSettingSo>();
+            _boardBackground = FindObjectInAsset<GameObject>("BoardBackground", EDataType.prefab);
             _cellPrefab = FindObjectInAsset<Cell>().gameObject;
             _tilePrefab = FindObjectInAsset<Tile>().gameObject;
         }

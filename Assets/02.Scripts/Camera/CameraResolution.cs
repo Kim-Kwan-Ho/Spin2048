@@ -10,6 +10,11 @@ namespace KKH.Camera
         protected override void Initialize()
         {
             base.Initialize();
+          
+        }
+
+        private void Update()
+        {
             float targetAspect = 16f / 9f;
             float currentAspect = _camera.aspect;
 
@@ -22,7 +27,6 @@ namespace KKH.Camera
                 _camera.orthographicSize = _boardUnit / currentAspect;
             }
         }
-
         protected override void OnBindField()
         {
             base.OnBindField();
