@@ -55,7 +55,6 @@ namespace KKH.Board
             float boardWidth = _boardSetting.Col + (_boardSetting.Col - 1) * _boardSetting.CellOffSet;
             float boardHeight = _boardSetting.Row + (_boardSetting.Row - 1) * _boardSetting.CellOffSet;
 
-            // 보드의 중앙 시작 위치 계산
             float xStart = -boardWidth / 2 + 0.5f;
             float yStart = -boardHeight / 2 + 0.5f;
 
