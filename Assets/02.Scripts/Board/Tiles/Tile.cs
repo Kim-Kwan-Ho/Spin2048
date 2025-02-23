@@ -49,9 +49,10 @@ namespace KKH.Board
             _cell.SetTile(this);
 
         }
-        public void UpgradeTileStep()
+        public int UpgradeTileStep()
         {
             SetTileInfo(++_step);
+            return _tileSettingSo.GetValue(_step-1);
         }
 
         public bool CheckMerge(Tile tile)
