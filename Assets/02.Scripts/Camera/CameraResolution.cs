@@ -27,11 +27,13 @@ namespace KKH.Camera
                 _camera.orthographicSize = _boardUnit / currentAspect;
             }
         }
+#if UNITY_EDITOR
         protected override void OnBindField()
         {
             base.OnBindField();
             _camera = GetComponent<UnityEngine.Camera>();
         }
+#endif
     }
 
 }
