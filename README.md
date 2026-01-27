@@ -1,4 +1,4 @@
-https://kim-kwan-ho.github.io/Gravity2048_Play/
+https://kim-kwan-ho.github.io/Spin2048_Play/
 
 ## 1. 개요
 기존 2048 게임의 조작 방식을 변형하여, 좌우 회전을 통해 블록을 이동하는 게임
